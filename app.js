@@ -1,3 +1,4 @@
+require('dotenv').config()
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
@@ -12,8 +13,8 @@ const questionsRouter = require('./routes/questions');
 const answersRouter = require('./routes/answers');
 
 //DATABASE
-const db = require('./models/index');
-db.sequelize.sync({force: true});
+const db = require('./models/database');
+db.sequelize.sync();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -25,7 +26,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/user', usersRouter);
 app.use('/question', questionsRouter);
 app.use('/answer', answersRouter);
 

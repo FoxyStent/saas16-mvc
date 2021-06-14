@@ -21,6 +21,15 @@ module.exports = (sequelize, Sequelize) => {
             type: DataTypes.STRING,
             allowNull: false
         },
-    }, { timestamps: true, createdAt: 'memberSince', updatedAt: false})
+    }, {
+        timestamps: true,
+        createdAt: 'memberSince', updatedAt: false,
+        hooks: {
+            beforeCreate: async  (user, options) => {
+                const salt = await bcrypt.genSalt();
+                user.password = await bcrypt.hash(user.password, salt);
+            }
+        }
+    })
     return user;
 }
