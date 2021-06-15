@@ -2,12 +2,8 @@ const DataTypes = require("sequelize");
 
 module.exports = (sequelize, Sequelize) => {
     const keyword = sequelize.define("keyword",{
-        kId: {
-            primaryKey: true,
-            autoIncrement: true,
-            type: DataTypes.INTEGER
-        },
         name: {
+            primaryKey: true,
             type: DataTypes.STRING,
             unique: true,
             allowNull: false
