@@ -1,9 +1,21 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
+const questionController = require('../controllers/questionController');
+const userController = require('../controllers/userController');
+
+/*
+--- POST @ / => Adds new question.
+--- GET @ /question/id => Returns question with qId = id
+--- GET @ /questions => Returns all questions
+ */
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
-    res.send('respond with a resource');
-});
+router.post('/', userController.authorize, questionController.createQuestion);
+
+router.get('/questions', questionController.allQuestions);
+
+router.get('/:qid', questionController.getQuestion);
+
+
 
 module.exports = router;
