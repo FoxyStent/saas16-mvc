@@ -12,15 +12,33 @@ const sequelize = new Sequelize(process.env.DB_URL, {
     }
 });
 
+const Answer  = require("./answer.js")(sequelize, Sequelize);
+const Keyword = require("./keyword")(sequelize, Sequelize);
+const Question = require("./question")(sequelize, Sequelize);
+const Relations = require("./relations")(sequelize, Sequelize);
+const User  = require("./user")(sequelize, Sequelize);
+
 const db = {};
 
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-db.answer = require("./answer.js")(sequelize, Sequelize);
-db.keyword = require("./keyword")(sequelize, Sequelize);
-db.question = require("./question")(sequelize, Sequelize);
-db.relations = require("./relations")(sequelize, Sequelize);
-db.user = require("./user")(sequelize, Sequelize);
+User.hasMany(Question);
+Question.belongsTo(User);
+User.hasMany(Answer);
+Answer.belongsTo(User);
+Question.hasMany(Answer);
+Answer.belongsTo(Question);
+Question.hasMany(Relations);
+Relations.belongsTo(Question);
+Keyword.hasMany(Relations);
+Relations.belongsTo(Keyword);
+
+
+db.answer = Answer
+db.keyword = Keyword
+db.question = Question
+db.relations = Relations
+db.user = User
 
 module.exports = db;
