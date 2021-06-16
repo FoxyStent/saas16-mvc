@@ -3,21 +3,26 @@ const User = db.user;
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const redis = require('../utils/redis')
+const createError = require("http-errors");
 
 const createUser = async (req, res, next) => {
     const newUser = req.body;
-    User.create(newUser)
-    res.json({
-        access_token: jwt.sign({
-            username: newUser.username,
-            memberSince: newUser.memberSince,
-            isRefresh: false
-        }, process.env.TOKEN_SECRET, { expiresIn: 600}),
-        refresh_token: jwt.sign({
-            username: newUser.username,
-            memberSince: newUser.memberSince,
-            isRefresh: true,
-        }, process.env.TOKEN_SECRET, { expiresIn: '60d'})
+    User.create(newUser).then(response => {
+        res.json({
+            access_token: jwt.sign({
+                username: response.username,
+                memberSince: response.memberSince,
+                isRefresh: false
+            }, process.env.TOKEN_SECRET, { expiresIn: 600}),
+            refresh_token: jwt.sign({
+                username: response.username,
+                memberSince: response.memberSince,
+                isRefresh: true,
+            }, process.env.TOKEN_SECRET, { expiresIn: '60d'})
+        })
+    }).catch(e => {
+        next(createError(400, e.parent));
+        console.log(e);
     })
 }
 
@@ -39,9 +44,12 @@ const login = async (req, res, next) => {
                     }, process.env.TOKEN_SECRET, { expiresIn: '60d'})
                 })
             } else {
-                res.sendStatus(401);
+                next(createError(401, 'Passwords did not Match'))
             }
         })
+    }).catch(e => {
+        console.log(e);
+        next(createError(404,'UserNotFound'));
     });
 }
 
@@ -106,6 +114,8 @@ const refresh = async (req, res, next) => {
 }
 
 const authorize = async (req, res, next) => {
+    if (!req.headers['authorization'])
+        res.sendStatus(401);
     const access_token = req.headers['authorization'].replace('Bearer ', '');
     jwt.verify(access_token, process.env.TOKEN_SECRET, (err, result) => {
         if (err)
@@ -123,6 +133,27 @@ const profile = async (req, res, next) => {
     })
 }
 
+const isLogged = async (req, res, next) => {
+    console.log('checking for logged')
+    if (!req.headers['authorization']) {
+        res.locals.logged = false;
+        return next();
+    }
+    const access_token = req.headers['authorization'].replace('Bearer ', '');
+    jwt.verify(access_token, process.env.TOKEN_SECRET, (err, result) => {
+        if (err) {
+            res.locals.logged = false;
+            return next();
+        }
+        else {
+            res.locals.logged = true;
+            return next();
+        }
+    })
+}
+
+
+
 const userController = {}
 
 userController.createUser = createUser;
@@ -131,5 +162,6 @@ userController.logout = logout;
 userController.refresh = refresh;
 userController.authorize = authorize;
 userController.profile = profile;
+userController.isLogged = isLogged;
 
 module.exports = userController;

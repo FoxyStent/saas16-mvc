@@ -1,0 +1,86 @@
+<!-- Page where you can see a question and its answers -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="Login/Signup for Ask me Anything App"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+
+    <title>Ask me Anything</title>
+</head>
+<body>
+<div>
+    <div role="navigation" class="navbar justify-content-around navbar-light bg-light shadow-sm">
+
+        <h1 class="col-10 text-center">Ask me Anything!</h1>
+        <div class="d-grid gap-1 col-1 me-3">
+            <%if (isLogged) {%>
+                <a class="btn btn-primary">My Profile</a>
+            <%} else {%>
+                <a to="/login" class="btn btn-primary">Log In</a>
+            <%}%>
+        </div>
+    </div>
+
+    <div class="container pb-auto">
+
+        <div id='error' hidden=true class="row justify-content-center align-items-center">
+            <div class="col-5 mt-4">
+                <h6 class="text-center alert alert-danger">Something went wrong when posting your answer. Try again later</h6>
+            </div>
+        </div>
+
+        <div class="justify-content-start align-items-center mt-5">
+            <h2 class="ms-4"><%=title%></h2>
+            <p class="ms-4">Keywords: <%=keywords.join(', ')%></p>
+            <p class="ms-4">Asked from: <%=username%>,</p>
+            <p class="ms-4">on: <%=new Date(createdAt).toLocaleDateString('en-GB', { weekday: 'long', year:'numeric', month: 'numeric', day:'numeric'})%></p>
+        </div>
+
+        <div class="row justify-content-center align-items-start mt-4 text-center border-top">
+            <p class="col-5"><%=text%></p>
+        </div>
+
+        <div class="justify-content-start align-items-center mt-5">
+            <h5 class="ms-4 pb-5">Answers</h5>
+        </div>
+
+        <%answers.map(ans => { %>
+        <div>
+            <div class="row justify-content-center align-items-start text-center mt-4 border-top">
+                <p class="col-5"><%=ans['text']%></p>
+            </div>
+
+            <div class="justify-content-start align-items-center text-end mt-5">
+                <p class="me-4">Answered by: <%=ans['userUsername'] || "Anonymous"%>,</p>
+                <p class="me-4">on <%=new Date(ans['createdAt']).toLocaleDateString('en-GB', { weekday: 'long', year:'numeric', month: 'numeric', day:'numeric'})%></p>
+            </div>
+        </div>
+        <%})%>
+
+        <div class="justify-content-start align-items-center mt-5 border-top">
+            <h5 class="ms-4">Your Answer</h5>
+        </div>
+        <%if (!isLogged) {%>
+            <div class="row justify-content-center align-items-center mt-3">
+                <div class="col-auto">
+                    <h6 class="text-center alert alert-danger">You have to be logged in to answer a question. <a href="/login">Log In</a> and try again</h6>
+                </div>
+            </div>
+        <%}%>
+        <div class="row justify-content-center align-items-center mt-5">
+            <div class="col-auto">
+                <textarea id="text" placeholder="Type your Answer" rows=10 cols=92 onChange={handleChange}></textarea>
+            </div>
+        </div>
+        <div class="row justify-content-center align-items-center mt-3 pb-5">
+            <div class="col-auto">
+                <button <%if (!isLogged) {%>disabled=true<%}%> class="btn btn-primary" onClick={handlePost}>Post your Answer</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

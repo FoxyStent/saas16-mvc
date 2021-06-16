@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
+const questionController = require('../controllers/questionController');
 
 /*
 --- POST @ / => Adds new user.
@@ -11,11 +12,12 @@ const userController = require('../controllers/userController');
 --- POST @ /logout => Logouts/Invalidates Users JWT
  */
 
-router.post('/', userController.createUser);
-router.get('/profile', userController.authorize, userController.profile);
+router.get('/:username/profile', userController.authorize, userController.profile);
+router.get('/:username/questions', userController.authorize, questionController.usersQuestions)
 router.post('/login', userController.login);
 router.post('/logout', userController.logout);
 router.post('/refresh', userController.refresh);
+router.post('/', userController.createUser);
 
 
 module.exports = router;

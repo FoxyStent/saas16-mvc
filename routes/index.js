@@ -1,9 +1,26 @@
 var express = require('express');
 var router = express.Router();
+console.log(process.env.DB_URL)
+const userController = require('../controllers/userController');
+const viewController = require('../controllers/viewController')
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+/*
+--- POST @ / => Returns Main View
+--- GET @ /login => Returns Login View
+--- GET @ /signup => Returns Sing Up View (login.ejs { login:false }
+ */
+
+
+router.get('/', userController.isLogged, viewController.main);
+
+router.get('/login', userController.isLogged, viewController.login);
+
+router.get('/signup', userController.isLogged, viewController.signup);
+
+router.get('/ask', userController.isLogged, function (req, res,next){
+  console.log(req.logged);
+  res.render('ask', {isLogged: req.logged})
 });
+
 
 module.exports = router;

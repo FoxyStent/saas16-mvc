@@ -1,0 +1,97 @@
+<!-- Login Page. Used for Login/Signup -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="Login/Signup for Ask me Anything App"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+
+    <title>Ask me Anything</title>
+</head>
+    <body>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script type="text/javascript" src="/javascripts/loginScripts.js"></script>
+        <div class="container">
+
+            <div class="row align-items-center justify-content-center border mt-5 bg-white">
+                <div class="col-auto">
+                    <h2>Join Ask me Anything!</h2>
+                </div>
+            </div>
+
+            <div class="mt-3">
+                <div class="shadow-lg w-50 m-auto p-4 rounded">
+                    <form>
+                        <div class="form-group">
+                            <% if (!login) {%>
+                                <h5 class="mb-2">Name:</h5>
+                                <input class="form-control" id="name" placeholder="Enter your name" type="text"/>
+                            <%}%>
+                        </div>
+
+                        <div class="form-group">
+                            <h5 class="mb-2 mt-2">Username:</h5>
+                            <% if (login) {%>
+                                <input class="form-control" id="username"  placeholder="Your Username" type="text"/>
+                            <%}
+                            else {%>
+                                <input class="form-control" id="username"  placeholder="Choose your Username" type="text"/>
+                            <%}%>
+                        </div>
+
+                        <div class="form-group">
+                            <h5 class="mb-2 mt-2">Password:</h5>
+                            <% if (login) {%>
+                                <input class="form-control" id="password" placeholder="Your Password" type="password"/>
+                            <%}
+                            else {%>
+                                <input class="form-control" id="password" placeholder="Choose a Password" type="password"/>
+                            <%}%>
+                        </div>
+
+                        <% if (!login) {%>
+                            <div class="form-group">
+                                <h5 class="mb-2 mt-2">Validate Password:</h5>
+                                <input class="form-control" id="val_pass" placeholder="Re-enter your Password" type="password"/>
+                            </div>
+
+                            <div class="form-group">
+                                <h5 class="mb-2 mt-2">E-mail:</h5>
+                                <input class="form-control" id="email" placeholder="Enter your e-mail" type="text"/>
+                            </div>
+                        <%}else{%>
+                            <p id='newAcc' class="mt-2">You don't have account? <a href="/signup">Sign up</a></p>
+                        <%}%>
+
+                        <div class="form-group">
+                            <p hidden=true id='match' class="mt-2 alert alert-danger text-center">Passwords don't match.</p>
+                            <p hidden=true id='used' class="mt-2 alert alert-danger text-center">Username is already used.</p>
+                        </div>
+                    </form>
+
+                    <div class="row justify-content-center mt-4">
+                        <div class="col-3">
+                            <% if (login) {%>
+                                <button class="btn btn-primary" onclick="login()" id="login">Log In</button>
+                            <%}else {%>
+                                <button class="btn btn-primary" onclick="signup()" id="signup">Sign Up</button>
+                            <%}%>
+                        </div>
+                        <div class="col-2">
+                            <button class="btn btn-secondary" id='cancel' type="submit">Cancel</button>
+                        </div>
+                    </div>
+
+                    <div hidden=true class="row justify-content-center mt-3" >
+                        <div class="alert alert-danger">
+                            <h2 class="col">An unexpected error occurred.</h2>
+                            <h2 class="col">Contact system administration</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
