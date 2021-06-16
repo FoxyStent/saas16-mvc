@@ -1,14 +1,13 @@
-const dbConfig = require("../db.config.js");
 const Sequelize = require("sequelize");
 
 const sequelize = new Sequelize(process.env.DB_URL, {
     operatorsAliases: false,
 
     pool: {
-        max: dbConfig.pool.max,
-        min: dbConfig.pool.min,
-        acquire: dbConfig.pool.acquire,
-        idle: dbConfig.pool.idle
+        max: 5,
+        min: 0,
+        acquire: 30000,
+        idle: 10000
     }
 });
 

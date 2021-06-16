@@ -25,10 +25,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+//Setting routes
 app.use('/', indexRouter);
 app.use('/user', usersRouter);
 app.use('/question', questionsRouter);
 app.use('/answer', answersRouter);
+
+//setting custom PORT for heroku deployment
+app.set('port', process.env.PORT || 3000);
 
 
 // catch 404 and forward to error handler
