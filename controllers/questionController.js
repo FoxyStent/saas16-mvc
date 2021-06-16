@@ -2,6 +2,7 @@ const db = require('../models/database');
 const Question = db.question;
 const Keyword = db.keyword;
 const Relation = db.relations;
+const Answer = db.answer;
 
 const createQuestion = async (req, res, next) => {
     const info = req.body;
@@ -20,9 +21,21 @@ const createQuestion = async (req, res, next) => {
 }
 
 const getQuestion = async (req, res, next) => {
-    Question.findByPk(req.params['qid']).then(result => {
-        res.json(result);
-    })
+    const result = await Question.findByPk(req.params['qid'], {include: [{model: Relation, attributes: ['keywordName']}, {model: Answer}]})
+    const keywords = []
+    for (rel of result.relations){
+        keywords.push(rel.keywordName);
+    }
+    const data = {
+        isLogged: res.locals.logged,
+        title: result.title,
+        text: result.text,
+        createdAt: result.createdAt,
+        username: result.userUsername,
+        keywords: keywords,
+        answers: result.answers,
+    }
+    res.render('question', data);
 }
 
 const allQuestions = async (req, res, next) => {
@@ -37,11 +50,21 @@ const usersQuestions = async (req, res, next) => {
     })
 }
 
+const keywordsQuestions = async (req, res, next) => {
+    const relations = await Relation.findAll({ where: { keywordName: req.params['keyword']}});
+    const questions = [];
+    for (let rel of relations){
+        questions.push(await Question.findByPk(rel.questionQId));
+    }
+    res.json(questions);
+}
+
 const controller = {};
 
 controller.createQuestion = createQuestion;
 controller.getQuestion = getQuestion;
 controller.allQuestions = allQuestions;
 controller.usersQuestions = usersQuestions;
+controller.keywordsQuestions = keywordsQuestions;
 
 module.exports = controller;
