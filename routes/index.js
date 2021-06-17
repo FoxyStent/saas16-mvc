@@ -1,5 +1,5 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 console.log(process.env.DB_URL)
 const userController = require('../controllers/userController');
 const viewController = require('../controllers/viewController')
@@ -19,7 +19,7 @@ router.get('/signup', userController.isLogged, viewController.signup);
 
 router.get('/ask', userController.isLogged, function (req, res,next){
   console.log(req.logged);
-  res.render('ask', {isLogged: req.logged})
+  res.render('ask', {isLogged: res.locals.logged})
 });
 
 

@@ -1,7 +1,8 @@
 
 
 const main = (req, res, next) => {
-    res.render('main', {isLogged: req.logged})
+    console.log(req.logged);
+    res.render('main', {isLogged: res.locals.logged})
 }
 
 const login = (req, res, next) => {

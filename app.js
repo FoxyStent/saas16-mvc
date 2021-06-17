@@ -1,10 +1,14 @@
-require('dotenv').config()
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const createError = require('http-errors');
 const express = require('express');
-const path = require('path');
 const logger = require('morgan');
+const path = require('path');
+require('dotenv').config()
 
 const app = express();
+app.use(cors());
+app.use(cookieParser());
 
 //ROUTERS
 const indexRouter = require('./routes/index');
@@ -33,7 +37,6 @@ app.use('/answer', answersRouter);
 
 //setting custom PORT for heroku deployment
 app.set('port', process.env.PORT || 3000);
-
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -8,12 +8,16 @@ const createError = require("http-errors");
 const createUser = async (req, res, next) => {
     const newUser = req.body;
     User.create(newUser).then(response => {
+
+        const access_token = jwt.sign({
+            username: response.username,
+            memberSince: response.memberSince,
+            isRefresh: false
+        }, process.env.TOKEN_SECRET, { expiresIn: 600});
+
+        res.cookie('access_token', access_token);
+
         res.json({
-            access_token: jwt.sign({
-                username: response.username,
-                memberSince: response.memberSince,
-                isRefresh: false
-            }, process.env.TOKEN_SECRET, { expiresIn: 600}),
             refresh_token: jwt.sign({
                 username: response.username,
                 memberSince: response.memberSince,
@@ -29,14 +33,20 @@ const createUser = async (req, res, next) => {
 const login = async (req, res, next) => {
     const info = req.body;
     User.findByPk(info.username).then(response => {
+        if (!response)
+            return res.status(404).send('UserNotFound');
         bcrypt.compare(info.password, response.password).then(result => {
             if (result) {
+
+                const access_token = jwt.sign({
+                    username: response.username,
+                    memberSince: response.memberSince,
+                    isRefresh: false
+                }, process.env.TOKEN_SECRET, { expiresIn: 600});
+
+                res.cookie('access_token', access_token);
+
                 res.json({
-                    access_token: jwt.sign({
-                        username: response.username,
-                        memberSince: response.memberSince,
-                        isRefresh: false
-                    }, process.env.TOKEN_SECRET, { expiresIn: 600}),
                     refresh_token: jwt.sign({
                         username: response.username,
                         memberSince: response.memberSince,
@@ -44,12 +54,12 @@ const login = async (req, res, next) => {
                     }, process.env.TOKEN_SECRET, { expiresIn: '60d'})
                 })
             } else {
-                next(createError(401, 'Passwords did not Match'))
+                return res.status(401).send('WrongPass');
             }
         })
     }).catch(e => {
         console.log(e);
-        next(createError(404,'UserNotFound'));
+        return res.status(404).send('UserNotFound');
     });
 }
 
@@ -114,6 +124,18 @@ const refresh = async (req, res, next) => {
 }
 
 const authorize = async (req, res, next) => {
+    if (!req.cookies['access_token'])
+        res.sendStatus(401);
+    const access_token = req.cookies['access_token'];
+    jwt.verify(access_token, process.env.TOKEN_SECRET, (err, result) => {
+        if (err)
+            res.sendStatus(401);
+        else {
+            req.username = result['username'];
+            next();
+        }
+    })
+    /*
     if (!req.headers['authorization'])
         res.sendStatus(401);
     const access_token = req.headers['authorization'].replace('Bearer ', '');
@@ -125,6 +147,7 @@ const authorize = async (req, res, next) => {
             next();
         }
     })
+     */
 }
 
 const profile = async (req, res, next) => {
@@ -134,12 +157,12 @@ const profile = async (req, res, next) => {
 }
 
 const isLogged = async (req, res, next) => {
-    console.log('checking for logged')
-    if (!req.headers['authorization']) {
+    console.log(req.cookies)
+    if (req.cookies['access_token'] === null) {
         res.locals.logged = false;
         return next();
     }
-    const access_token = req.headers['authorization'].replace('Bearer ', '');
+    const access_token = req.cookies['access_token'];
     jwt.verify(access_token, process.env.TOKEN_SECRET, (err, result) => {
         if (err) {
             res.locals.logged = false;
