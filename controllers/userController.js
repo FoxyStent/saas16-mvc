@@ -7,15 +7,23 @@ const createError = require("http-errors");
 
 const createUser = async (req, res, next) => {
     const newUser = req.body;
-    User.create(newUser).then(response => {
+    User.findByPk(newUser.username).then(response => {
+        if (response)
+            return res.status(403).send('UsernameUsed');
+    })
+    User.findOne({where: { email: newUser.email}}).then(response => {
+        if (response)
+            return res.status(403).send('EmailUsed');
+    })
 
+    User.create(newUser).then(response => {
         const access_token = jwt.sign({
             username: response.username,
             memberSince: response.memberSince,
             isRefresh: false
         }, process.env.TOKEN_SECRET, { expiresIn: 600});
 
-        res.cookie('access_token', access_token);
+        res.cookie('access_token', access_token, { expires: new Date(Date.now() + 600000)});
 
         res.json({
             refresh_token: jwt.sign({
@@ -25,7 +33,7 @@ const createUser = async (req, res, next) => {
             }, process.env.TOKEN_SECRET, { expiresIn: '60d'})
         })
     }).catch(e => {
-        next(createError(400, e.parent));
+        res.status(400).send('BadRequest');
         console.log(e);
     })
 }
@@ -44,7 +52,7 @@ const login = async (req, res, next) => {
                     isRefresh: false
                 }, process.env.TOKEN_SECRET, { expiresIn: 600});
 
-                res.cookie('access_token', access_token);
+                res.cookie('access_token', access_token, { expires: new Date(Date.now() + 600000)});
 
                 res.json({
                     refresh_token: jwt.sign({
@@ -77,7 +85,7 @@ const logout = async (req, res, next) => {
         }
     })
 
-    const access = req.headers['authorization'].replace('Bearer ', '');
+    const access = req.cookies['access_token'];
     jwt.verify(access, process.env.TOKEN_SECRET, (error, result) => {
         if (error) {
             res.status(400).send('Invalid Access Token');
@@ -89,7 +97,8 @@ const logout = async (req, res, next) => {
             redis.set(access, 'invalid', 'PX', ttl);
         }
     })
-    res.render('main');
+    res.cookie('access_token', '', { expires: new Date(Date.now() - 999999999)})
+    res.status(200).send('OK');
 }
 
 const refresh = async (req, res, next) => {
@@ -103,12 +112,13 @@ const refresh = async (req, res, next) => {
                     res.status(400).send('Invalid Refresh Token');
                     console.log(error);
                 } else {
-                    res.json({
-                        access_token: jwt.sign({
+                    const access_token = jwt.sign({
                             username: result.username,
                             memberSince: result.memberSince,
                             isRefresh: false
-                        }, process.env.TOKEN_SECRET, {expiresIn: 600}),
+                        }, process.env.TOKEN_SECRET, {expiresIn: 600})
+                    res.cookie('access_token', access_token, { expires: 600});
+                    res.json({
                         refresh_token: jwt.sign({
                             username: result.username,
                             memberSince: result.memberSince,
@@ -129,7 +139,7 @@ const authorize = async (req, res, next) => {
     const access_token = req.cookies['access_token'];
     jwt.verify(access_token, process.env.TOKEN_SECRET, (err, result) => {
         if (err)
-            res.sendStatus(401);
+            res.status(401).send('Expired');
         else {
             req.username = result['username'];
             next();
