@@ -93,9 +93,7 @@ const perWeek = async (req, res, next) => {
     weekday[6]="Saturday";
     weekday[0]="Sunday";
     for (i=0; i<7; i++){
-        console.log(i);
         if (questions[i]) {
-            console.log('in');
             let q = questions[0];
             let newDate = new Date(q.date).toLocaleDateString('en-US', {weekday: 'long'})
             final_questions.push({
@@ -103,7 +101,6 @@ const perWeek = async (req, res, next) => {
                 count: q['count']
             })
         }else {
-            console.log('out');
             final_questions.push({
                 day: weekday[i],
                 count: 0
@@ -128,6 +125,27 @@ const titleQuestions = async(req, res, next) => {
     return res.json(titles);
 }
 
+const latestQuestions = async(req, res, next) => {
+    const result = await Question.findAll({ limit:5, include: {model: Relation, attributes: ['keywordName']}});
+    const questions = [];
+    console.log(result)
+    for (q of result) {
+        const keywords = []
+        for (rel of q.relations) {
+            keywords.push(rel.keywordName);
+        }
+        const data = {
+            qId: q.qId,
+            title: q.title,
+            text: q.text,
+            keywords: keywords,
+        }
+        questions.push(data);
+    }
+    res.locals.latest = questions;
+    return next();
+}
+
 const controller = {};
 
 controller.createQuestion = createQuestion;
@@ -137,5 +155,6 @@ controller.usersQuestions = usersQuestions;
 controller.keywordsQuestions = keywordsQuestions;
 controller.perWeek = perWeek;
 controller.titleQuestions = titleQuestions;
+controller.latestQuestions = latestQuestions;
 
 module.exports = controller;

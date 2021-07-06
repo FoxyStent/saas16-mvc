@@ -1,8 +1,8 @@
 
 
 const main = (req, res, next) => {
-    console.log(req.logged);
-    res.render('main', {isLogged: res.locals.logged, perWeek: res.locals.perWeek});
+    console.log(res.locals);
+    res.render('main', {isLogged: res.locals.logged, perWeek: res.locals.perWeek, latest_questions: res.locals.latest});
 }
 
 const login = (req, res, next) => {

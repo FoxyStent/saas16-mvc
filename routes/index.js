@@ -12,7 +12,7 @@ const questionController = require('../controllers/questionController');
  */
 
 
-router.get('/', userController.isLogged, questionController.perWeek, viewController.main);
+router.get('/', userController.isLogged, questionController.perWeek, questionController.latestQuestions, viewController.main);
 
 router.get('/login', userController.isLogged, viewController.login);
 

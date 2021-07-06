@@ -57,34 +57,29 @@
             </div>
         </div>
         <div class="row mb-5">
-            <div class="col mt-4">
-                <h3 class="text-center">Search a Question</h3>
+            <div class="text-center col mt-4">
+                <h3>Search a Question</h3>
                 <div class="mb-3">
                     <input class="form-control" oninput="handleChange(this.value)" placeholder="Title"/>
                 </div>
-                <div class="text-center" id="search"></div>
+                <div id="search"></div>
                 <h3>If this didn't help</h3>
                 <div>
                     <a href="/ask" class="btn btn-primary mt-2">Go and Ask</a>
                 </div>
             </div>
 
-            <div class="col mt-4">
-                <h3 class="text-center">Answer a Question</h3>
+            <div class="text-center col mt-4">
+                <h3>Answer a Question</h3>
 
-                {!latest_questions.hasOwnProperty('error') && latest_questions.map(item =>{
-                return(
-                <div class="row border justify-content-start">
-                    <Nava class="fs-2" href={{pathname: '/question', state: { id: item['qId']}}}>{item['title']}</Nava>
-                    <text>{item['text']}</text>
-                    <text>{item['keywords'].join(', ')}</text>
-                </div>
-                )
-                })
-                }
-                <div hidden={!week.hasOwnProperty('error')} class="mb-3">
-                    <h2 class="alert alert-danger">An error occurred</h2>
-                </div>
+                <%latest_questions.map(question => {%>
+                    <%const link = "question"+question['qId']%>
+                    <div class="row border justify-content-start">
+                        <a class="fs-2" href=<%-link%>><%-question['title']%></a>
+                        <text><%-question['text']%></text>
+                        <text><%-question['keywords']%></text>
+                    </div>
+                <%})%>
             </div>
         </div>
     </div>
