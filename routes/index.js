@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 console.log(process.env.DB_URL)
 const userController = require('../controllers/userController');
-const viewController = require('../controllers/viewController')
+const viewController = require('../controllers/viewController');
+const questionController = require('../controllers/questionController');
 
 /*
 --- POST @ / => Returns Main View
@@ -11,7 +12,7 @@ const viewController = require('../controllers/viewController')
  */
 
 
-router.get('/', userController.isLogged, viewController.main);
+router.get('/', userController.isLogged, questionController.perWeek, viewController.main);
 
 router.get('/login', userController.isLogged, viewController.login);
 

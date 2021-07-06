@@ -2,7 +2,7 @@
 
 const main = (req, res, next) => {
     console.log(req.logged);
-    res.render('main', {isLogged: res.locals.logged})
+    res.render('main', {isLogged: res.locals.logged, perWeek: res.locals.perWeek});
 }
 
 const login = (req, res, next) => {

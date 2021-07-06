@@ -19,6 +19,8 @@ router.get('/questions', questionController.allQuestions);
 
 router.get('/:qid', userController.isLogged, questionController.getQuestion);
 
+router.get('/title/:tit', questionController.titleQuestions);
+
 
 
 
