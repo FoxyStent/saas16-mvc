@@ -23,12 +23,23 @@ const handleChange = (e) => {
 
         req.onreadystatechange = function () {
             if (req.readyState === XMLHttpRequest.DONE && req.status === 200){
-                console.log(req.response);
+                const data = JSON.parse(req.response);
+                console.log(data);
+                document.getElementById('search').innerHTML = data.map( q => {
+                    return "<div class='row border justify-content-start'> \
+                        <a class='fs-2' href='/question/"+q['qId'] + "'>"+ q['title']+"</a> \
+                        <text>" + q['text'] + "</text> \
+                    </div> \
+                    "
+                }).join('');
             }
 
         }
         req.open('GET', url, true);
         req.setRequestHeader('Content-Type', 'application/json');
         req.send();
+    }
+    else {
+        document.getElementById('search').innerHTML = "";
     }
 }
