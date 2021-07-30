@@ -15,11 +15,13 @@ router.post('/', userController.authorize, questionController.createQuestion);
 
 router.get('/keyword/:keyword', questionController.keywordsQuestions);
 
-router.get('/questions', questionController.allQuestions);
+router.get('/all/:offset', userController.isLogged, questionController.moreQuestions);
+router.get('/all', userController.isLogged, questionController.allQuestions);
 
 router.get('/:qid', userController.isLogged, questionController.getQuestion);
 
 router.get('/title/:tit', questionController.titleQuestions);
+
 
 
 

@@ -41,7 +41,21 @@ const getQuestion = async (req, res, next) => {
 }
 
 const allQuestions = async (req, res, next) => {
-    Question.findAll().then(result => {
+    Question.findAll({
+        limit: 10,
+        order: [['createdAt', 'DESC']]
+    }).then(result => {
+        res.render('all', {questions: result, isLogged: res.locals.logged});
+    });
+}
+
+const moreQuestions = async (req, res, next) => {
+    const off = parseInt(req.params['offset']);
+    Question.findAll({
+        offset: off,
+        limit: 10,
+        order: [['createdAt', 'DESC']]
+    }).then(result => {
         res.json(result);
     });
 }
@@ -126,7 +140,7 @@ const titleQuestions = async(req, res, next) => {
 }
 
 const latestQuestions = async(req, res, next) => {
-    const result = await Question.findAll({ limit:5, include: {model: Relation, attributes: ['keywordName']}});
+    const result = await Question.findAll({limit:5, include: {model: Relation, attributes: ['keywordName']}, order: [['createdAt','DESC']] });
     const questions = [];
     console.log(result)
     for (q of result) {
@@ -151,10 +165,12 @@ const controller = {};
 controller.createQuestion = createQuestion;
 controller.getQuestion = getQuestion;
 controller.allQuestions = allQuestions;
+controller.moreQuestions = moreQuestions;
 controller.usersQuestions = usersQuestions;
 controller.keywordsQuestions = keywordsQuestions;
 controller.perWeek = perWeek;
 controller.titleQuestions = titleQuestions;
 controller.latestQuestions = latestQuestions;
+
 
 module.exports = controller;
