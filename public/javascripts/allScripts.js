@@ -1,7 +1,7 @@
 const showMoreQuestions = () => {
     const req = new XMLHttpRequest();
     const offset = parseInt(localStorage.getItem("items")) || 0;
-    const url = "http://localhost:3000/question/all/" + offset;
+    const url = "/question/all/" + offset;
     localStorage.setItem("items", offset+offset);
     console.log(offset);
     req.onreadystatechange = function () {
@@ -40,7 +40,7 @@ const showMoreUsersAnswers = () => {
     const req = new XMLHttpRequest();
     const offset = parseInt(localStorage.getItem("items")) || 0;
     const user = localStorage.getItem('user_logged');
-    const url = "http://localhost:3000/user/"+user+"/answers/" + offset;
+    const url = "/user/"+user+"/answers/" + offset;
     req.onreadystatechange = function () {
         if (req.readyState === XMLHttpRequest.DONE && req.status === 200){
             if (req.response === "[]") {
@@ -77,7 +77,7 @@ const showMoreUsersQuestions = () => {
     const req = new XMLHttpRequest();
     const offset = parseInt(localStorage.getItem("items")) || 0;
     const user = localStorage.getItem('user_logged');
-    const url = "http://localhost:3000/user/"+user+"/questions/" + offset;
+    const url = "/user/"+user+"/questions/" + offset;
     req.onreadystatechange = function () {
         if (req.readyState === XMLHttpRequest.DONE && req.status === 200){
             if (req.response === "[]") {

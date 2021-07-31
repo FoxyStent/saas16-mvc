@@ -4,7 +4,7 @@ const signup = function () {
     if (pass === valp) {
         console.log('same pass');
         const req = new XMLHttpRequest();
-        const url = "http://localhost:3000/user"
+        const url = "/user"
         const data = {
             name: document.getElementById('name').value,
             username: document.getElementById('username').value,
@@ -42,7 +42,7 @@ const signup = function () {
 
 const login = function () {
     const req = new XMLHttpRequest();
-    const url = "http://localhost:3000/user/login"
+    const url = "/user/login"
     const data = {
         'username': document.getElementById('username').value,
         'password': document.getElementById('password').value

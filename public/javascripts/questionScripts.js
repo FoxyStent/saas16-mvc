@@ -1,6 +1,6 @@
 const submitAnswer = () => {
     const req = new XMLHttpRequest();
-    const url = "http://localhost:3000/answer"
+    const url = "/answer"
     const qid = window.location.pathname.split('/')[2]
     const data = {
         'qid' : qid,

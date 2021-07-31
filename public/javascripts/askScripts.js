@@ -1,6 +1,6 @@
 const submitQuestion = () => {
     const req = new XMLHttpRequest();
-    const url = "http://localhost:3000/question"
+    const url = "/question"
     const data = {
         'title': document.getElementById('title').value,
         'userUsername': localStorage.getItem('user_logged'),

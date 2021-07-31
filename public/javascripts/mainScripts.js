@@ -4,7 +4,7 @@ const profile = () => {
 
 const logout = () => {
     const req = new XMLHttpRequest();
-    const url = "http://localhost:3000/user/logout"
+    const url = "/user/logout"
     const data = {
         'refresh_token': localStorage.getItem('refresh_token'),
     };
@@ -23,7 +23,7 @@ const logout = () => {
 const handleChange = (e) => {
     if (e.length > 2){
         const req = new XMLHttpRequest();
-        const url = "http://localhost:3000/question/title/"+e;
+        const url = "/question/title/"+e;
 
         req.onreadystatechange = function () {
             if (req.readyState === XMLHttpRequest.DONE && req.status === 200){
