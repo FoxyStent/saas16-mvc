@@ -114,7 +114,6 @@ const perWeek = async (req, res, next) => {
         group: [sequelize.fn('DATE', sequelize.col('createdAt'))],
         order: [['count', 'ASC']]
     })
-    console.log(questions);
     const final_questions = []
     let weekday=new Array(7);
     weekday[1]="Monday";
@@ -128,10 +127,8 @@ const perWeek = async (req, res, next) => {
     for (i=0; i<7; i++){
         let q = questions[questions.length - x];
         if (q) {
-            console.log(new Date(q.date).getDate(), new Date(new Date().setDate(new Date().getDate() - i)).getDate())
             if (new Date(q.date).getDate() === new Date(new Date().setDate(new Date().getDate() - i)).getDate()) {
                 x++;
-                console.log(new Date(new Date().setDate(new Date().getDate() - i)))
                 let newDate = new Date(q.date).getDate();
                 final_questions.push({
                     day: new Date(q.date).toLocaleDateString('en-GB', {weekday: 'long'}),
@@ -150,7 +147,6 @@ const perWeek = async (req, res, next) => {
             })
         }
     }
-    console.log(final_questions);
     res.locals.perWeek={
         keywords: relations.slice(0,6),
         days: final_questions
