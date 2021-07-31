@@ -5,6 +5,7 @@ const express = require('express');
 const logger = require('morgan');
 const path = require('path');
 require('dotenv').config()
+process.env.TZ = 'Europe/Athens';
 
 const app = express();
 app.use(cors());

@@ -28,19 +28,35 @@
         </div>
     </div>
 
-    <div class="container pb-5">
-        <%questions.map(question => {%>
-            <%const link = "question/"+question['qId']%>
+    <div class="container pb-5 mt-4">
+        <%if (!answers){%>
+        <%data.map(question => {%>
+            <%const link = "/question/"+question['qId']%>
             <div class="row border justify-content-start">
                 <a class="fs-2" href=<%-link%>><%-question['title']%></a>
                 <text><%-question['text']%></text>
                 <text><%-question['keywords']%></text>
             </div>
-        <%})%>
+        <%})} else {%>
+        <%data.map(ans => {%>
+            <%const link = "/question/"+ans['questionQId']%>
+            <div class="row border justify-content-start">
+                <a class="fs-2" href=<%-link%>><%-ans.question['title']%></a>
+                <text>My answer: <%-ans['text']%></text>
+            </div>
+        <%})}%>
     <div id="more"></div>
     </div>
     <div class="row justify-content-center">
-        <button onclick="showMore()" class="col-auto btn btn-primary">Show more Questions</button>
+        <%var handler;%>
+        <%if (answers) {%>
+        <%  handler = "showMoreUsersAnswers()"%>
+        <%}else if (!answers && forUser){%>
+        <%  handler = "showMoreUsersQuestions()"%>
+        <%}else { %>
+        <%  handler = "showMoreQuestions()"%>
+        <%}%>
+        <button onclick="<%-handler%>" class="col-auto btn btn-primary">Show more Questions</button>
     </div>
 </div>
 </body>

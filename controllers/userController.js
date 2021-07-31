@@ -146,32 +146,19 @@ const authorize = async (req, res, next) => {
         if (err)
             res.status(401).send('Expired');
         else {
+            res.locals.logged = true;
             req.username = result['username'];
             next();
         }
     })
-    /*
-    if (!req.headers['authorization'])
-        res.sendStatus(401);
-    const access_token = req.headers['authorization'].replace('Bearer ', '');
-    jwt.verify(access_token, process.env.TOKEN_SECRET, (err, result) => {
-        if (err)
-            res.sendStatus(401);
-        else {
-            req.username = result['username'];
-            next();
-        }
-    })
-     */
 }
 
 const profile = async (req, res, next) => {
-    //User.findByPk(req.username, { attributes: ['username', 'email', 'name', 'memberSince']}).then(result => {
-    //    res.render('main', result);
-    //})
     const questions = await Question.findAll({where: { userUsername: req.username}, order: [['createdAt', 'DESC']]})
-    const answers = await Answer.findAll({where: { userUsername: req.username}, order: [['createdAt', 'DESC']]});
+    const answers = await Answer.findAll({where: { userUsername: req.username}, attributes:['text', 'questionQId'], order: [['createdAt', 'DESC']], include: {model: Question, attributes: ['title']}});
+    console.log(answers);
     res.render('main', {
+        user: req.username,
         isLogged:res.locals.logged,
         mainPage:false,
         questions: [...questions],

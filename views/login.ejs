@@ -17,6 +17,9 @@
 
             <div class="row align-items-center justify-content-center border mt-5 bg-white">
                 <div class="col-auto">
+                    <a href="/"><img src="/logo192.png" width="75" height="75"></a>
+                </div>
+                <div class="col-auto">
                     <h2>Join Ask me Anything!</h2>
                 </div>
             </div>
@@ -64,11 +67,8 @@
                         <%}else{%>
                             <p id='newAcc' class="mt-2">You don't have account? <a href="/signup">Sign up</a></p>
                         <%}%>
+                        <div id="error" class="form-group"></div>
 
-                        <div class="form-group">
-                            <p hidden=true id='match' class="mt-2 alert alert-danger text-center">Passwords don't match.</p>
-                            <p hidden=true id='used' class="mt-2 alert alert-danger text-center">Username is already used.</p>
-                        </div>
                     </form>
 
                     <div class="row justify-content-center mt-4">
@@ -80,14 +80,7 @@
                             <%}%>
                         </div>
                         <div class="col-2">
-                            <button class="btn btn-secondary" id='cancel' type="submit">Cancel</button>
-                        </div>
-                    </div>
-
-                    <div hidden=true class="row justify-content-center mt-3" >
-                        <div class="alert alert-danger">
-                            <h2 class="col">An unexpected error occurred.</h2>
-                            <h2 class="col">Contact system administration</h2>
+                            <a href="/" class="btn btn-secondary" id='cancel' type="submit">Cancel</a>
                         </div>
                     </div>
                 </div>

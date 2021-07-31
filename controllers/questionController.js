@@ -45,7 +45,7 @@ const allQuestions = async (req, res, next) => {
         limit: 10,
         order: [['createdAt', 'DESC']]
     }).then(result => {
-        res.render('all', {questions: result, isLogged: res.locals.logged});
+        res.render('all', {data: result, answers: false, isLogged: res.locals.logged, forUser: false});
     });
 }
 
@@ -61,10 +61,28 @@ const moreQuestions = async (req, res, next) => {
 }
 
 const usersQuestions = async (req, res, next) => {
-    Question.findAll( { where: { userUsername: req.params['username']}}).then(result => {
-        res.json(result);
+    Question.findAll( {
+        where: { userUsername: req.params['username']},
+        limit: 10,
+        order: [['createdAt', 'DESC']],
+    }).then(result => {
+        res.render('all', {data: result, answers: false, isLogged: res.locals.logged, forUser: true});
     })
 }
+
+const moreUsersQuestions = async (req, res, next) => {
+    const off = parseInt(req.params['offset']);
+    Question.findAll({
+        where: { userUsername: req.params['username']},
+        offset: off,
+        limit: 10,
+        order: [['createdAt', 'DESC']]
+    }).then(result => {
+        res.json(result);
+    });
+}
+
+
 
 const keywordsQuestions = async (req, res, next) => {
     const relations = await Relation.findAll({ where: { keywordName: req.params['keyword']}});
@@ -179,11 +197,13 @@ controller.getQuestion = getQuestion;
 controller.allQuestions = allQuestions;
 controller.moreQuestions = moreQuestions;
 controller.usersQuestions = usersQuestions;
+controller.moreUsersQuestions = moreUsersQuestions;
 controller.keywordsQuestions = keywordsQuestions;
 controller.perWeek = perWeek;
 controller.titleQuestions = titleQuestions;
 controller.latestQuestions = latestQuestions;
 controller.userQuestionContribution = userQuestionContribution;
+
 
 
 module.exports = controller;
