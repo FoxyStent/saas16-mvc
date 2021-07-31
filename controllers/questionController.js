@@ -114,6 +114,7 @@ const perWeek = async (req, res, next) => {
         group: [sequelize.fn('DATE', sequelize.col('createdAt'))],
         order: [['count', 'ASC']]
     })
+    console.log(questions);
     const final_questions = []
     let weekday=new Array(7);
     weekday[1]="Monday";
@@ -123,21 +124,33 @@ const perWeek = async (req, res, next) => {
     weekday[5]="Friday";
     weekday[6]="Saturday";
     weekday[0]="Sunday";
+    let x=1;
     for (i=0; i<7; i++){
-        if (questions[i]) {
-            let q = questions[0];
-            let newDate = new Date(q.date).toLocaleDateString('en-US', {weekday: 'long'})
+        let q = questions[questions.length - x];
+        if (q) {
+            console.log(new Date(q.date).getDate(), new Date(new Date().setDate(new Date().getDate() - i)).getDate())
+            if (new Date(q.date).getDate() === new Date(new Date().setDate(new Date().getDate() - i)).getDate()) {
+                x++;
+                console.log(new Date(new Date().setDate(new Date().getDate() - i)))
+                let newDate = new Date(q.date).getDate();
+                final_questions.push({
+                    day: new Date(q.date).toLocaleDateString('en-GB', {weekday: 'long'}),
+                    count: q['count']
+                })
+            } else {
+                final_questions.push({
+                    day: new Date(new Date().setDate(new Date().getDate() - i)).toLocaleDateString('en-GB', {weekday: 'long'}),
+                    count: 0
+                })
+            }
+        } else {
             final_questions.push({
-                day: newDate,
-                count: q['count']
-            })
-        }else {
-            final_questions.push({
-                day: weekday[i],
+                day: new Date(new Date().setDate(new Date().getDate() - i)).toLocaleDateString('en-GB', {weekday: 'long'}),
                 count: 0
             })
         }
     }
+    console.log(final_questions);
     res.locals.perWeek={
         keywords: relations.slice(0,6),
         days: final_questions
