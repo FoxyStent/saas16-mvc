@@ -160,6 +160,18 @@ const latestQuestions = async(req, res, next) => {
     return next();
 }
 
+const userQuestionContribution = async (req, res, next) => {
+    res.locals.questionContribution = await Question.count({
+        attributes: [[sequelize.fn('DATE', sequelize.col('createdAt')), 'date']],
+        where: {
+            userUsername: req.username,
+        },
+        group: [sequelize.fn('DATE', sequelize.col('createdAt'))]
+    });
+    return next();
+}
+
+
 const controller = {};
 
 controller.createQuestion = createQuestion;
@@ -171,6 +183,7 @@ controller.keywordsQuestions = keywordsQuestions;
 controller.perWeek = perWeek;
 controller.titleQuestions = titleQuestions;
 controller.latestQuestions = latestQuestions;
+controller.userQuestionContribution = userQuestionContribution;
 
 
 module.exports = controller;

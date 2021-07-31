@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
 const questionController = require('../controllers/questionController');
+const answerController = require('../controllers/answerController');
 
 /*
 --- POST @ / => Adds new user.
@@ -12,7 +13,7 @@ const questionController = require('../controllers/questionController');
 --- POST @ /logout => Logouts/Invalidates Users JWT
  */
 
-router.get('/:username/profile', userController.authorize, userController.profile);
+router.get('/:username/profile', userController.authorize, questionController.latestQuestions, questionController.userQuestionContribution, answerController.userAnswersContribution, userController.profile);
 router.get('/:username/questions', userController.authorize, questionController.usersQuestions)
 router.post('/login', userController.login);
 router.post('/logout', userController.logout);

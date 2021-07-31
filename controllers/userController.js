@@ -1,9 +1,14 @@
 const db = require('../models/database');
+const sequelize = db.sequelize
 const User = db.user;
+const Question = db.question;
+const Answer = db.answer;
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const redis = require('../utils/redis')
 const createError = require("http-errors");
+
+
 
 const createUser = async (req, res, next) => {
     const newUser = req.body;
@@ -161,8 +166,20 @@ const authorize = async (req, res, next) => {
 }
 
 const profile = async (req, res, next) => {
-    User.findByPk(req.username, { attributes: ['username', 'email', 'name', 'memberSince']}).then(result => {
-        res.render('main', result);
+    //User.findByPk(req.username, { attributes: ['username', 'email', 'name', 'memberSince']}).then(result => {
+    //    res.render('main', result);
+    //})
+    const questions = await Question.findAll({where: { userUsername: req.username}, order: [['createdAt', 'DESC']]})
+    const answers = await Answer.findAll({where: { userUsername: req.username}, order: [['createdAt', 'DESC']]});
+    res.render('main', {
+        isLogged:res.locals.logged,
+        mainPage:false,
+        questions: [...questions],
+        answers: [...answers],
+        perWeek: null,
+        latest_questions: res.locals.latest,
+        answer_cont: res.locals.answerContribution,
+        question_cont: res.locals.questionContribution,
     })
 }
 
