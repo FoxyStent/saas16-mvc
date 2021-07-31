@@ -145,6 +145,12 @@
     <script>
     <%const labels = []%>
     <%const count = []%>
+    <%console.log(perWeek.keywords)%>
+    <%perWeek.keywords.sort(function (a,b) { %>
+    <%    console.log(b.count - a.count);%>
+    <%    return b.count - a.count;%>
+    <%});%>
+    <%console.log(perWeek.keywords)%>
     <%for (var keyword of perWeek.keywords){ %>
     <%      labels.push(keyword.keywordName)%>
     <%      count.push(keyword.count)%>

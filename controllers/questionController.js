@@ -13,7 +13,6 @@ const createQuestion = async (req, res, next) => {
         keyword = keyword.trim();
         const res = await Keyword.findByPk(keyword);
         if (!res){
-            console.log('didnt find ' + keyword);
             await Keyword.create({name: keyword});
         }
         Relation.create({questionQId: newQ.qId, keywordName: keyword});
@@ -23,7 +22,6 @@ const createQuestion = async (req, res, next) => {
 
 const getQuestion = async (req, res, next) => {
     const result = await Question.findByPk(req.params['qid'], {include: [{model: Relation, attributes: ['keywordName']}, {model: Answer}]});
-    console.log(result)
     const keywords = []
     for (rel of result.relations){
         keywords.push(rel.keywordName);
@@ -103,9 +101,9 @@ const perWeek = async (req, res, next) => {
             }
         },
         group: 'keywordName',
+        order: [['count', 'DESC']],
         limit: 2
     })
-
     const questions = await Question.count({
         attributes: [[sequelize.fn('DATE', sequelize.col('createdAt')), 'date']],
         where: {
@@ -113,7 +111,8 @@ const perWeek = async (req, res, next) => {
                 [sequelize.Op.gt]: limit
             }
         },
-        group: [sequelize.fn('DATE', sequelize.col('createdAt'))]
+        group: [sequelize.fn('DATE', sequelize.col('createdAt'))],
+        order: [['count', 'ASC']]
     })
     const final_questions = []
     let weekday=new Array(7);
@@ -160,7 +159,6 @@ const titleQuestions = async(req, res, next) => {
 const latestQuestions = async(req, res, next) => {
     const result = await Question.findAll({limit:5, include: {model: Relation, attributes: ['keywordName']}, order: [['createdAt','DESC']] });
     const questions = [];
-    console.log(result)
     for (q of result) {
         const keywords = []
         for (rel of q.relations) {

@@ -39,7 +39,6 @@ const createUser = async (req, res, next) => {
         })
     }).catch(e => {
         res.status(400).send('BadRequest');
-        console.log(e);
     })
 }
 
@@ -71,7 +70,6 @@ const login = async (req, res, next) => {
             }
         })
     }).catch(e => {
-        console.log(e);
         return res.status(404).send('UserNotFound');
     });
 }
@@ -80,12 +78,10 @@ const logout = async (req, res, next) => {
     const refresh = req.body['refresh_token'];
     jwt.verify(refresh, process.env.TOKEN_SECRET, (error, result) => {
         if (error) {
-            console.log(error);
             res.status(400).send('Invalid Refresh Token');
         }
         else {
             const ttl = Math.ceil(result['exp'] - Date.now() / 1000);
-            console.log(typeof refresh);
             redis.set(refresh, 'invalid', 'PX', ttl);
         }
     })
@@ -94,11 +90,9 @@ const logout = async (req, res, next) => {
     jwt.verify(access, process.env.TOKEN_SECRET, (error, result) => {
         if (error) {
             res.status(400).send('Invalid Access Token');
-            console.log(error);
         }
         else {
             const ttl = Math.ceil(result['exp'] - Date.now() / 1000);
-            console.log(typeof access);
             redis.set(access, 'invalid', 'PX', ttl);
         }
     })
@@ -115,7 +109,6 @@ const refresh = async (req, res, next) => {
             jwt.verify(refresh, process.env.TOKEN_SECRET, (error, result) => {
                 if (error) {
                     res.status(400).send('Invalid Refresh Token');
-                    console.log(error);
                 } else {
                     const access_token = jwt.sign({
                             username: result.username,
@@ -156,7 +149,6 @@ const authorize = async (req, res, next) => {
 const profile = async (req, res, next) => {
     const questions = await Question.findAll({where: { userUsername: req.username}, order: [['createdAt', 'DESC']]})
     const answers = await Answer.findAll({where: { userUsername: req.username}, attributes:['text', 'questionQId'], order: [['createdAt', 'DESC']], include: {model: Question, attributes: ['title']}});
-    console.log(answers);
     res.render('main', {
         user: req.username,
         isLogged:res.locals.logged,
@@ -171,7 +163,6 @@ const profile = async (req, res, next) => {
 }
 
 const isLogged = async (req, res, next) => {
-    console.log(req.cookies)
     if (req.cookies['access_token'] === null) {
         res.locals.logged = false;
         return next();

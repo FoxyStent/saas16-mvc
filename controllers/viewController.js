@@ -1,7 +1,6 @@
 
 
 const main = (req, res, next) => {
-    console.log(res.locals);
     res.render('main', {mainPage: true, isLogged: res.locals.logged, perWeek: res.locals.perWeek, latest_questions: res.locals.latest});
 }
 

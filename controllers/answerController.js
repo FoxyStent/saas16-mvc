@@ -9,9 +9,7 @@ const createAnswer = async (req, res, next) => {
     const info = req.body;
     Answer.create({questionQId: info.qid, text: info.text, userUsername: req.username}).then(response => {
         res.json(response);
-        console.log('ok');
     }).catch(e => {
-        console.log(e);
         next(createError(e));
     })
 }
@@ -20,9 +18,7 @@ const questionsAnswers = async (req, res, next) => {
     const info = req.params;
     Answer.findAll({where: { questionQId: info.id }}).then(response => {
         res.json(response);
-        console.log('ok');
     }).catch(e => {
-        console.log(e);
         next(createError(e));
     })
 }
@@ -36,9 +32,7 @@ const usersAnswers = async (req, res, next) => {
         include: {model: Question, attributes: ['title']}
     }).then(response => {
         res.render('all', {data: response, answers: true, isLogged: res.locals.logged, forUser: true});
-        console.log('ok');
     }).catch(e => {
-        console.log(e);
         next(createError(e));
     })
 }

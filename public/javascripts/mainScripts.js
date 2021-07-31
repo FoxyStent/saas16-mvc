@@ -1,3 +1,7 @@
+const profile = () => {
+    window.location = "/user/"+localStorage.getItem("user_logged") + "/profile";
+}
+
 const logout = () => {
     const req = new XMLHttpRequest();
     const url = "http://localhost:3000/user/logout"
@@ -32,6 +36,12 @@ const handleChange = (e) => {
                     </div> \
                     "
                 }).join('');
+            } else if (req.readyState === XMLHttpRequest.DONE && req.status === 401){
+                const ans = confirm("Your sessions has ended. Please Log In again");
+                if (ans)
+                    window.location("/login");
+                else
+                    window.location("/");
             }
 
         }
